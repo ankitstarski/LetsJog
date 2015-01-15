@@ -13,6 +13,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -58,12 +59,16 @@ public class FormUploader {
         httpConn.setUseCaches(false);
         httpConn.setDoOutput(true); // indicates POST method
         httpConn.setDoInput(true);
+        httpConn.setRequestMethod("POST");
+        httpConn.setRequestProperty("Connection", "Keep-Alive");
+        httpConn.setRequestProperty("ENCTYPE", "multipart/form-data");
         httpConn.setRequestProperty("Content-Type",
                 "multipart/form-data; boundary=" + boundary);
-        httpConn.setRequestProperty("User-Agent", "LetsJog-Android");
+        httpConn.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36");
         outputStream = httpConn.getOutputStream();
         writer = new PrintWriter(new OutputStreamWriter(outputStream, charset),
                 true);
+        Log.i("fos","Uploading");
     }
 
     /**
@@ -87,17 +92,18 @@ public class FormUploader {
      * Adds a upload file section to the request
      *
      * @param fieldName  name attribute in <input type="file" name="..." />
-     * @param uploadFile a File to be uploaded
+     * @param
      * @throws IOException
      */
-    public void addFilePart(String fieldName, File uploadFile)
+    public void addFilePart(String fieldName, InputStream inputStream, String fileName )
             throws IOException {
-        String fileName = uploadFile.getName();
+
         writer.append("--" + boundary).append(LINE_FEED);
         writer.append(
                 "Content-Disposition: form-data; name=\"" + fieldName
                         + "\"; filename=\"" + fileName + "\"")
                 .append(LINE_FEED);
+        Log.i("fos","reached1");
         writer.append(
                 "Content-Type: "
                         + URLConnection.guessContentTypeFromName(fileName))
@@ -106,17 +112,24 @@ public class FormUploader {
         writer.append(LINE_FEED);
         writer.flush();
 
-        FileInputStream inputStream = new FileInputStream(uploadFile);
+        Log.i("fos","Reached 2");
         byte[] buffer = new byte[4096];
         int bytesRead = -1;
+        long written=0;
+
+        Log.i("fos","Writing File...");
         while ((bytesRead = inputStream.read(buffer)) != -1) {
+            written+=bytesRead;
+            Log.i("fos",written/1024.0+"KB uploaded");
             outputStream.write(buffer, 0, bytesRead);
+            outputStream.flush();
         }
         outputStream.flush();
         inputStream.close();
 
         writer.append(LINE_FEED);
         writer.flush();
+
     }
 
     /**
@@ -143,6 +156,8 @@ public class FormUploader {
         writer.append(LINE_FEED).flush();
         writer.append("--" + boundary + "--").append(LINE_FEED);
         writer.close();
+
+        Log.i("fos","File written..");
 
         // checks server's status code first
         int status = httpConn.getResponseCode();
