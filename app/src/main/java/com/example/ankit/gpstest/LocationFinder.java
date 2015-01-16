@@ -59,7 +59,7 @@ public class LocationFinder implements LocationListener {
         alt = location.getAltitude();
         speed = location.getSpeed();
         Log.i("fos",lat+", "+lon+", "+speed);
-        MainActivity.printLoc(lat+", "+lon+", "+speed);
+        //MainActivity.printLoc(lat+", "+lon+", "+speed);
 
         if(speed>=MIN_JOGGING_SPEED && speed <= MAX_JOGGING_SPEED) {
 

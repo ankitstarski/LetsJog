@@ -2,8 +2,11 @@ package com.example.ankit.gpstest;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.provider.MediaStore;
@@ -12,31 +15,66 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    static TextView tv ;
+    private LocationManager  locationManager;
+    Button upload;
+    ProgressBar progressBar ;
+    int bytesAvailable,totalBytes;
+
+    double lat,lon;
+
+    String uploadURL = "http://ankitstarski.phpzilla.net/secretupload.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        tv = (TextView) findViewById(R.id.tv);
+        upload = (Button) findViewById(R.id.upload_button);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         //startService(new Intent(this, LocationService.class));
-        Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-        i.setType("image/*");
-        i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        Intent c = Intent.createChooser(i, "Select soundfile");
-        startActivityForResult(c,1);
+
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                locationManager = (LocationManager) getSystemService ( Context.LOCATION_SERVICE );
+                Location current =  locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                lon =  current.getLongitude();
+                lat = current.getLatitude();
+
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("audio/*");
+                //intent.addCategory(Intent.CATEGORY_APP_MUSIC);
+                startActivityForResult(intent,1);
+
+            }
+        });
+
+
+
+
     }
 
     @Override
@@ -52,6 +90,7 @@ public class MainActivity extends ActionBarActivity {
             // Instead, a URI to that document will be contained in the return intent
             // provided to this method as a parameter.
             // Pull that URI using resultData.getData().
+
             Uri uri = null;
             if (resultData != null) {
                 uri = resultData.getData();
@@ -63,39 +102,151 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private class UploadFormTask extends AsyncTask<Uri, Void, Boolean>{
+    private class UploadFormTask extends AsyncTask<Uri, Integer, Boolean>{
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setProgress(0);
+            progressBar.setVisibility(ProgressBar.VISIBLE);
+        }
 
         @Override
         protected Boolean doInBackground(Uri... uri) {
             try {
 
-            FormUploader x = new FormUploader("http://ankitstarski.phpzilla.net/secretupload.php", "UTF-8");
+
+                HttpURLConnection connection = null;
+                DataOutputStream outputStream = null;
+                String lineEnd = "\r\n";
+                String twoHyphens = "--";
+                String boundary = "*****";
+                int bytesRead, bytesAvailable, bufferSize;
+                byte[] buffer;
+                int maxBufferSize = 1 * 1024 * 1024;
+
+                InputStream fileInputStream = getContentResolver().openInputStream(uri[0]);
+
+                int serverResponseCode;
+
+
+                URL url = new URL(uploadURL);
+                connection = (HttpURLConnection) url.openConnection();
+
+                // Allow Inputs & Outputs
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+                connection.setUseCaches(false);
+
+                // Enable POST method
+                connection.setRequestMethod("POST");
+
+                connection.setRequestProperty("Connection", "Keep-Alive");
+                connection.setRequestProperty("Content-Type",     "multipart/form-data;boundary="+boundary);
+
+                outputStream = new DataOutputStream(     connection.getOutputStream() );
+                outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+                outputStream.writeBytes("Content-Disposition: form-data;     name=\"upload_file\";filename=\"" + System.currentTimeMillis() +"\"" + lineEnd);
+                outputStream.writeBytes(lineEnd);
+
+                bytesAvailable = fileInputStream.available();
+                Log.v("Size", bytesAvailable + "");
+
+                progressBar.setProgress(0);
+                progressBar.setMax(bytesAvailable);
+                //Log.v("Max",pb.getMax()+"");
+
+                bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                buffer = new byte[bufferSize];
+
+
+                // Read file
+                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                while (bytesRead > 0)
+                {
+                    outputStream.write(buffer, 0, bufferSize);
+
+                    bytesAvailable = fileInputStream.available();
+                    Log.v("Available",bytesAvailable+"");
+
+                    publishProgress();
+
+                    bufferSize = Math.min(bytesAvailable,     maxBufferSize);
+                    bytesRead = fileInputStream.read(buffer, 0,      bufferSize);
+                }
+
+                outputStream.writeBytes(lineEnd);
+
+                /* lat field */
+
+                outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+                outputStream.writeBytes("Content-Disposition: form-data; name=\"" + "latitude" + "\"");
+                outputStream.writeBytes(lineEnd);
+                outputStream.writeBytes(lineEnd+""+lat+""+lineEnd);
+                outputStream.flush();
+
+                /* lon field */
+
+                outputStream.writeBytes(twoHyphens + boundary + lineEnd);
+                outputStream.writeBytes("Content-Disposition: form-data; name=\"" + "longitude" + "\"");
+                outputStream.writeBytes(lineEnd);
+                outputStream.writeBytes(lineEnd+""+lon+""+lineEnd);
+                outputStream.flush();
+
+                outputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+
+                // Responses from the server (code and message)
+                serverResponseCode = connection.getResponseCode();
+
+
+                fileInputStream.close();
+                outputStream.flush();
+                outputStream.close();
+
+                if(serverResponseCode==200){
+                    return true;
+                }else {
+                    return false;
+                }
+
+
+
+
+            /*
+            FormUploader x = new FormUploader(uploadURL, "UTF-8");
                 x.addFilePart("upload_file", getContentResolver().openInputStream(uri[0]),"sadas.jpg");
-                x.finish();
+                x.finish();*/
             }
             catch (Exception ex){
                 return false;
             }
 
-            return true;
+
+            //return true;
+        }
+
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+
+            progressBar.setProgress(progressBar.getMax()-(int)(bytesAvailable/(double)totalBytes*100));
         }
 
         @Override
         protected void onPostExecute(Boolean s) {
             if(!s){
                 Log.i("fos","error");
-                Toast.makeText(getApplicationContext(),"Error in Uploading",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,"Error in Uploading",Toast.LENGTH_SHORT).show();
             }
             else{
                 Log.i("fos","uploaded");
-                Toast.makeText(getApplicationContext(),"File Uploaded Successfully",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,"File Uploaded Successfully",Toast.LENGTH_SHORT).show();
             }
+
+            progressBar.setVisibility(ProgressBar.INVISIBLE);
         }
     }
 
-    static void printLoc(String x){
-        tv.setText(x);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
