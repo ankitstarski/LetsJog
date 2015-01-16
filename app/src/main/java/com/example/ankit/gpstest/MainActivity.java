@@ -43,7 +43,7 @@ public class MainActivity extends ActionBarActivity {
     ProgressBar progressBar ;
     int bytesAvailable,totalBytes;
 
-    double lat,lon;
+    double lat=0.0,lon=0.0;
 
     String uploadURL = "http://ankitstarski.phpzilla.net/secretupload.php";
 
@@ -60,10 +60,10 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 locationManager = (LocationManager) getSystemService ( Context.LOCATION_SERVICE );
                 Location current =  locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                lon =  current.getLongitude();
-                lat = current.getLatitude();
-
+                if(current!=null) {
+                    lon = current.getLongitude();
+                    lat = current.getLatitude();
+                }
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("audio/*");
                 //intent.addCategory(Intent.CATEGORY_APP_MUSIC);
@@ -145,7 +145,8 @@ public class MainActivity extends ActionBarActivity {
 
                 outputStream = new DataOutputStream(     connection.getOutputStream() );
                 outputStream.writeBytes(twoHyphens + boundary + lineEnd);
-                outputStream.writeBytes("Content-Disposition: form-data;     name=\"upload_file\";filename=\"" + System.currentTimeMillis() +"\"" + lineEnd);
+                outputStream.writeBytes("Content-Disposition: form-data;     name=\"upload_file\";filename=\"" +
+                        System.currentTimeMillis()+".mp3" +"\"" + lineEnd);
                 outputStream.writeBytes(lineEnd);
 
                 bytesAvailable = fileInputStream.available();
@@ -197,7 +198,8 @@ public class MainActivity extends ActionBarActivity {
 
                 // Responses from the server (code and message)
                 serverResponseCode = connection.getResponseCode();
-
+                String responseMessage = connection.getResponseMessage();
+                Log.i("fos",responseMessage);
 
                 fileInputStream.close();
                 outputStream.flush();
