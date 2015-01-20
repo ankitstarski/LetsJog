@@ -40,4 +40,10 @@
         android:textSize="16sp"
         android:textColor="@color/material_blue_grey_800"/>
 
+    <TextView
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        android:visibility="gone"
+        android:id="@+id/Uri"/>
+
 </RelativeLayout>

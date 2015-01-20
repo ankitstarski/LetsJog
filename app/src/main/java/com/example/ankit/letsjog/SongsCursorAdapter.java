@@ -4,6 +4,7 @@ package com.example.ankit.letsjog;
 import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,13 +13,16 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -26,7 +30,7 @@ import java.io.IOException;
  * Created by ankit on 1/20/15.
  */
 
-public class SongsCursorAdapter extends CursorAdapter{
+public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnItemClickListener{
     private LruCache<Integer, Bitmap> mMemoryCache;
     private final Context context;
     private final Cursor cursor;
@@ -156,6 +160,20 @@ public class SongsCursorAdapter extends CursorAdapter{
         //imageCover.setImageBitmap(bitmap);
 
 
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterViewCompat, View view, int pos, long id) {
+        cursor.moveToPosition(pos);
+        int rowId = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
+        String songUri = cursor.getString(cursor
+                .getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+        Log.i("fos", songUri);
+        Intent intent = new Intent();
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        File file = new File(songUri);
+        intent.setDataAndType(Uri.fromFile(file), "audio/*");
+        context.startActivity(intent);
     }
 
     static class ViewHolder {

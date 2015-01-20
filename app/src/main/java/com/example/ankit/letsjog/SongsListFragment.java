@@ -26,6 +26,7 @@ public class SongsListFragment extends Fragment {
 
         //Some audio may be explicitly marked as not being music
         String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
+        String sortOrder = MediaStore.Audio.Media.TITLE + " ASC";
 
         String[] projection = {
                 MediaStore.Audio.Media._ID,
@@ -33,7 +34,7 @@ public class SongsListFragment extends Fragment {
                 MediaStore.Audio.Media.TITLE,
                 MediaStore.Audio.Media.ALBUM,
                 MediaStore.Audio.Media.ALBUM_ID,
-                MediaStore.Audio.Media.DISPLAY_NAME,
+                MediaStore.Audio.Media.DATA,
                 MediaStore.Audio.Media.DURATION
         };
 
@@ -43,15 +44,12 @@ public class SongsListFragment extends Fragment {
                 projection,
                 selection,
                 null,
-                null
+                sortOrder
         );
-
-
-
 
         final SongsCursorAdapter adapter = new SongsCursorAdapter(getActivity(),cursor);
         listview.setAdapter(adapter);
-
+        listview.setOnItemClickListener(adapter);
 
 
         return fragmentView;
