@@ -85,7 +85,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     public void onBackPressed() {
         if (mNavigationDrawerFragment.isDrawerOpen())
             mNavigationDrawerFragment.closeDrawer();
-        else
-            super.onBackPressed();
+//        else
+//            super.onBackPressed();
     }
 }

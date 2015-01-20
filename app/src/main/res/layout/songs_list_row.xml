@@ -11,7 +11,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="6dip"
-        android:contentDescription="TODO"/>
+        android:contentDescription="TODO"
+        android:src="@drawable/ic_coverart"/>
 
     <TextView
         android:id="@+id/secondLine"
@@ -44,6 +45,6 @@
         android:layout_height="0dp"
         android:layout_width="0dp"
         android:visibility="gone"
-        android:id="@+id/Uri"/>
+        android:id="@+id/id"/>
 
 </RelativeLayout>

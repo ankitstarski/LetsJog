@@ -30,7 +30,8 @@ import java.io.IOException;
  * Created by ankit on 1/20/15.
  */
 
-public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnItemClickListener{
+public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnItemClickListener,
+        AdapterView.OnLongClickListener {
     private LruCache<Integer, Bitmap> mMemoryCache;
     private final Context context;
     private final Cursor cursor;
@@ -81,6 +82,7 @@ public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnI
         // Assign views
         TextView songTitle = (TextView) rowView.findViewById(R.id.firstLine);
         TextView songEtc = (TextView) rowView.findViewById(R.id.secondLine);
+        TextView id = (TextView) rowView.findViewById(R.id.id);
         ImageView imageCover = (ImageView) rowView.findViewById(R.id.icon);
         final int position = cursor.getPosition();
         ViewHolder viewHolder =new ViewHolder(songTitle,songEtc,imageCover,position);
@@ -95,12 +97,14 @@ public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnI
                 .getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE));
         Long albumId = cursor.getLong(cursor
                 .getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID));
+        int rowId = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
 
 
 
         // Set Views
         songTitle.setText(track);
         songEtc.setText(artist+"-"+album);
+        id.setText(rowId+"");
 
 
         Uri sArtworkUri=  Uri
@@ -129,7 +133,7 @@ public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnI
                 } catch (FileNotFoundException exception) {
                     exception.printStackTrace();
                     bitmap = BitmapFactory.decodeResource(context.getResources(),
-                            R.drawable.ic_menu_check);
+                            R.drawable.ic_coverart);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -154,12 +158,6 @@ public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnI
         else {
             asyncTask.execute(viewHolder);
         }
-
-
-        // set Cover Image
-        //imageCover.setImageBitmap(bitmap);
-
-
     }
 
     @Override
@@ -168,12 +166,21 @@ public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnI
         int rowId = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
         String songUri = cursor.getString(cursor
                 .getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+
+
+
         Log.i("fos", songUri);
         Intent intent = new Intent();
         intent.setAction(android.content.Intent.ACTION_VIEW);
         File file = new File(songUri);
         intent.setDataAndType(Uri.fromFile(file), "audio/*");
+
         context.startActivity(intent);
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        return false;
     }
 
     static class ViewHolder {

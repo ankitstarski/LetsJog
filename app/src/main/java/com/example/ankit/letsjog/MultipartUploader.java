@@ -1,23 +1,20 @@
 package com.example.ankit.letsjog;
 
 
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-
-
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntity;
 
 /**
  * Created by ankit on 1/19/15.
  */
 
 @SuppressWarnings("deprecation")
-public class MultipartUploader extends MultipartEntity
-
-{
+public class MultipartUploader extends MultipartEntity{
 
     private final ProgressListener listener;
 
@@ -71,4 +68,7 @@ public class MultipartUploader extends MultipartEntity
             this.listener.transferred(this.transferred);
         }
     }
+
+
+
 }
