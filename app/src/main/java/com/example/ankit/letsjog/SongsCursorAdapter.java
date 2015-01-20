@@ -1,6 +1,7 @@
 package com.example.ankit.letsjog;
 
 
+import android.annotation.TargetApi;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.support.v4.util.LruCache;
 import android.view.LayoutInflater;
@@ -69,6 +71,7 @@ public class SongsCursorAdapter extends CursorAdapter{
         return view;
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public void bindView(View rowView, final Context context, Cursor cursor) {
         // Assign views
@@ -139,7 +142,14 @@ public class SongsCursorAdapter extends CursorAdapter{
                 if(v.position==position)
                     v.icon.setImageBitmap(getBitmapFromMemCache(position));
             }
-        }.execute(viewHolder);
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, viewHolder);
+        }
+        else {
+            asyncTask.execute(viewHolder);
+        }
 
 
         // set Cover Image
