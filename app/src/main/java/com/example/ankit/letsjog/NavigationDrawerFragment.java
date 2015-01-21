@@ -25,7 +25,7 @@ import java.util.List;
 public class NavigationDrawerFragment extends Fragment implements NavigationDrawerCallbacks {
     private static final String PREF_USER_LEARNED_DRAWER = "navigation_drawer_learned";
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
-    private static final String PREFERENCES_FILE = "my_app_settings"; //TODO: change this to your file
+    private static final String PREFERENCES_FILE = "letsjog_pref"; //TODO: change this to your file
     private NavigationDrawerCallbacks mCallbacks;
     private RecyclerView mDrawerList;
     private View mFragmentContainerView;
@@ -139,9 +139,9 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
     public List<NavigationItem> getMenu() {
         List<NavigationItem> items = new ArrayList<NavigationItem>();
         items.add(new NavigationItem("Home", getResources().getDrawable(R.drawable.ic_nav_home)));
-        items.add(new NavigationItem("Songs", getResources().getDrawable(android.R.drawable.ic_media_play)));
-        items.add(new NavigationItem("Playlists", getResources().getDrawable(R.drawable.ic_menu_check)));
-        items.add(new NavigationItem("Exit", getResources().getDrawable(R.drawable.ic_menu_check)));
+        items.add(new NavigationItem("Songs", getResources().getDrawable(R.drawable.ic_nav_music)));
+        items.add(new NavigationItem("Playlists", getResources().getDrawable(R.drawable.ic_nav_playlists)));
+        items.add(new NavigationItem("Exit", getResources().getDrawable(R.drawable.ic_nav_exit)));
         return items;
     }
 

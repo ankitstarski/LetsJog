@@ -84,7 +84,7 @@ public class UploadActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        onBackPressed();
     }
 
     /**
