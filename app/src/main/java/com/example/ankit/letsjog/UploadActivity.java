@@ -82,6 +82,11 @@ public class UploadActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
     /**
      * Uploading the file to server
      * */
@@ -111,6 +116,8 @@ public class UploadActivity extends ActionBarActivity {
 
         @Override
         protected void onProgressUpdate(Integer... progress) {
+
+            progressBar.setIndeterminate(false);
             // Making progress bar visible
             progressBar.setVisibility(View.VISIBLE);
 

@@ -21,17 +21,22 @@
         android:layout_below="@id/coverArt"
         android:layout_centerHorizontal="true"
         android:ellipsize="marquee"
-        style="@style/AppTheme"/>
+        style="@style/TextAppearance.AppCompat.Medium.Inverse"/>
 
 
     <ProgressBar
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:id="@+id/progressBar"
         style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:indeterminate="true"
         android:layout_below="@id/songName"
-        android:layout_margin="12dip"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:animationResolution="1"
+        android:stateListAnimator="@anim/abc_fade_in"
+        android:layout_marginLeft="12dip"
+        android:layout_marginRight="12dip"
+        android:layout_marginTop="12dip" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -40,6 +45,6 @@
         android:id="@+id/percentage"
         android:layout_below="@+id/progressBar"
         android:layout_centerHorizontal="true"
-        style="@style/AppTheme"/>
+        style="@style/TextAppearance.AppCompat.Large"/>
 
 </RelativeLayout>

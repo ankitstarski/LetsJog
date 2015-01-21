@@ -7,5 +7,5 @@ import java.util.ArrayList;
  */
 public class Global {
     public static String FORM_URL = "http://ankitstarski.phpzilla.net/secretupload.php";
-    public static ArrayList<Integer> uploadingList = new ArrayList() ;
+    public static ArrayList<Integer> uploadingList = new ArrayList<Integer>() ;
 }

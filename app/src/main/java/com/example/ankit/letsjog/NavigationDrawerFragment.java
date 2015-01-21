@@ -1,12 +1,12 @@
 package com.example.ankit.letsjog;
 
 import android.app.Activity;
-import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -138,9 +138,10 @@ public class NavigationDrawerFragment extends Fragment implements NavigationDraw
 
     public List<NavigationItem> getMenu() {
         List<NavigationItem> items = new ArrayList<NavigationItem>();
-        items.add(new NavigationItem("Home", getResources().getDrawable(android.R.drawable.ic_menu_compass)));
+        items.add(new NavigationItem("Home", getResources().getDrawable(R.drawable.ic_nav_home)));
         items.add(new NavigationItem("Songs", getResources().getDrawable(android.R.drawable.ic_media_play)));
         items.add(new NavigationItem("Playlists", getResources().getDrawable(R.drawable.ic_menu_check)));
+        items.add(new NavigationItem("Exit", getResources().getDrawable(R.drawable.ic_menu_check)));
         return items;
     }
 

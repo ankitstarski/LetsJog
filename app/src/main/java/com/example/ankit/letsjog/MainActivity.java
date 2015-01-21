@@ -46,6 +46,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
                 break;
             case 1 :
                 showSongsListFragment();
+                break;
+            default:
+                finish();
+                break;
 
         }
     }
@@ -75,7 +79,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         // and add the transaction to the back stack so the user can navigate back
         transaction.replace(R.id.container, newFragment);
         transaction.addToBackStack(null);
-
         // Commit the transaction
         transaction.commit();
     }
@@ -85,7 +88,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     public void onBackPressed() {
         if (mNavigationDrawerFragment.isDrawerOpen())
             mNavigationDrawerFragment.closeDrawer();
-//        else
+        else
+            mNavigationDrawerFragment.openDrawer();
 //            super.onBackPressed();
     }
 }
