@@ -32,10 +32,12 @@ import java.io.IOException;
 
 public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnItemClickListener,
         AdapterView.OnLongClickListener {
+
     private LruCache<Integer, Bitmap> mMemoryCache;
     private final Context context;
     private final Cursor cursor;
     AsyncTask<ViewHolder, Void, Void> asyncTask;
+
     public SongsCursorAdapter(Context context, Cursor cursor) {
         super(context,cursor);
         this.context = context;
@@ -166,8 +168,6 @@ public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnI
         int rowId = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
         String songUri = cursor.getString(cursor
                 .getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
-
-
 
         Log.i("fos", songUri);
         Intent intent = new Intent();

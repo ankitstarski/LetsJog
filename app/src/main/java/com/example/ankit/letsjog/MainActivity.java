@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.widget.Toast;
 
@@ -32,7 +33,17 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         // Start the LocationService
         startService(new Intent(this,LocationService.class));
-        //getSupportFragmentManager().popBackStack();
+
+
+        Intent i = getIntent();
+
+//        if(i.getStringExtra("fragment").equals("playlists")){
+//            showPlaylistsFragment();
+//        }
+//        else if(i.getStringExtra("fragment").equals("songs")){
+//            showSongsListFragment();
+//        }
+
     }
 
     @Override
@@ -68,6 +79,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
+        // Set title
+        try {
+            getSupportActionBar().setTitle("Lets Jog");
+        }
+        catch (Exception e){
+            Log.i("fos","Activity not ye started");
+        }
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back
         transaction.replace(R.id.container, newFragment);
@@ -83,6 +101,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
+        // Set title
+        getSupportActionBar().setTitle("Songs on your device");
+
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back
         transaction.replace(R.id.container, newFragment);
@@ -95,6 +116,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         PlaylistsFragment newFragment = new PlaylistsFragment();
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Set title
+        getSupportActionBar().setTitle("Playlists created here");
 
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back

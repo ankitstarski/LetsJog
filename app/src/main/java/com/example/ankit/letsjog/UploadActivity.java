@@ -156,6 +156,8 @@ public class UploadActivity extends ActionBarActivity {
 
                 // Adding file data to http body
                 entity.addPart("upload_file", new FileBody(sourceFile));
+                // Adding Name of song to the form
+                entity.addPart("title", new StringBody(songTitle));
 
                 // Extra parameters if you want to pass to server
                 entity.addPart("lat", new StringBody(""+LocationFinder.getLat()));

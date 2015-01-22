@@ -2,6 +2,7 @@ package com.example.ankit.letsjog;
 
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ public class MainFragment extends Fragment implements ImageButton.OnClickListene
 
         button.setOnClickListener(this);
 
+
         return  view;
     }
 
@@ -78,7 +80,8 @@ public class MainFragment extends Fragment implements ImageButton.OnClickListene
                             public void onClick(DialogInterface dialog,int id) {
                                 dialog.cancel();
                             }
-                        });
+                        }
+                );
 
         // create alert dialog
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -88,6 +91,14 @@ public class MainFragment extends Fragment implements ImageButton.OnClickListene
     }
 
     public class PlaylistCreator extends AsyncTask<Void,Void,HttpResponse> {
+        ProgressDialog pd;
+        @Override
+        protected void onPreExecute() {
+            pd = new ProgressDialog(getActivity());
+            pd.setMessage("Creating playlist...");
+            pd.show();
+
+        }
 
         @Override
         protected HttpResponse doInBackground(Void... params) {
@@ -105,7 +116,6 @@ public class MainFragment extends Fragment implements ImageButton.OnClickListene
 
                 // Execute HTTP Post Request
                 HttpResponse response = httpclient.execute(httppost);
-
                 return response;
 
             } catch (ClientProtocolException e) {
@@ -123,6 +133,7 @@ public class MainFragment extends Fragment implements ImageButton.OnClickListene
                 return;
             }
 
+            pd.dismiss();
 
             String message = "" ;
             Scanner in;

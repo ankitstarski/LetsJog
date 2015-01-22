@@ -57,6 +57,9 @@ public class LocationService extends Service {
                 MIN_DISTANCE_CHANGE_FOR_UPDATES,
                 locationFinder);
 
+        locationFinder.onLocationChanged(locationManager
+                .getLastKnownLocation(LocationManager.GPS_PROVIDER));
+
         Log.i("fos","Location Service Created");
         Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
         return Service.START_STICKY;
@@ -64,7 +67,6 @@ public class LocationService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }

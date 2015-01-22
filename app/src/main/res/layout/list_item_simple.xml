@@ -10,5 +10,4 @@
     android:paddingLeft="50dp"
     android:textSize="24sp"
     android:alpha="0.87"
-    android:layout_margin="16dp"
-    android:background="@color/dim_foreground_disabled_material_dark"/>
+    android:layout_margin="16dp"/>

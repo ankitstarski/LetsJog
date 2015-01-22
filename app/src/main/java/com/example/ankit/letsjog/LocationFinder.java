@@ -134,6 +134,7 @@ public class LocationFinder implements LocationListener {
                                 "location by fellow joggers?");
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, MainActivity.class);
+        resultIntent.putExtra("fragment","playlists");
 
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
