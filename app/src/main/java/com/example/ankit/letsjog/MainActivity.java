@@ -37,12 +37,15 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         Intent i = getIntent();
 
-//        if(i.getStringExtra("fragment").equals("playlists")){
-//            showPlaylistsFragment();
-//        }
-//        else if(i.getStringExtra("fragment").equals("songs")){
-//            showSongsListFragment();
-//        }
+        String frag = i.getStringExtra("fragment");
+
+        if(frag!=null) {
+            if (frag.equals("playlists")) {
+                showPlaylistsFragment();
+            } else if (frag.equals("songs")) {
+                showSongsListFragment();
+            }
+        }
 
     }
 
@@ -84,7 +87,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
             getSupportActionBar().setTitle("Lets Jog");
         }
         catch (Exception e){
-            Log.i("fos","Activity not ye started");
+            Log.i("fos","Activity not yet started");
         }
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back

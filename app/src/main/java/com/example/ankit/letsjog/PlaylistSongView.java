@@ -92,10 +92,23 @@ public class PlaylistSongView extends ActionBarActivity {
                 return response;
 
             } catch (ClientProtocolException e) {
-                // TODO Auto-generated catch block
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getBaseContext() , "Error occurred",
+                                Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                });
             } catch (IOException e) {
-                Toast.makeText(getBaseContext() , "Error: Your Internet might be down, please check your connection",
-                        Toast.LENGTH_LONG).show();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getBaseContext() , "Error: Your Internet might be down, please check your connection",
+                                Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                });
             }
             return null;
         }
@@ -105,7 +118,6 @@ public class PlaylistSongView extends ActionBarActivity {
             if(response == null){
                 return;
             }
-
 
             int len =0 ;
             Scanner in;
@@ -124,6 +136,9 @@ public class PlaylistSongView extends ActionBarActivity {
             } catch (IOException e) {
                 Toast.makeText(getBaseContext(),"Error occurred",Toast.LENGTH_LONG).show();
                 return;
+            } catch (NumberFormatException e){
+                Toast.makeText(getBaseContext(),"Server might be having congestion, try again in sometime",
+                        Toast.LENGTH_LONG).show();
             }
 
             if(len == 0){

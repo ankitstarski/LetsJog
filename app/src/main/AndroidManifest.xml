@@ -27,7 +27,11 @@
         </activity>
         <activity
             android:name=".PlaylistSongView"
-            android:label="Songs list activity" >
+            android:label="Uploaded Songs" >
+        </activity>
+        <activity
+            android:name=".PlaylistChooseActivity"
+            android:label="Choose a Playlist" >
         </activity>
         <service
             android:name=".LocationService"

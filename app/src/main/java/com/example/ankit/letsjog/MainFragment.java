@@ -94,9 +94,14 @@ public class MainFragment extends Fragment implements ImageButton.OnClickListene
         ProgressDialog pd;
         @Override
         protected void onPreExecute() {
-            pd = new ProgressDialog(getActivity());
-            pd.setMessage("Creating playlist...");
-            pd.show();
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    pd = new ProgressDialog(getActivity());
+                    pd.setMessage("Creating playlist...");
+                    pd.show();
+                }
+            });
 
         }
 
@@ -118,11 +123,26 @@ public class MainFragment extends Fragment implements ImageButton.OnClickListene
                 HttpResponse response = httpclient.execute(httppost);
                 return response;
 
-            } catch (ClientProtocolException e) {
-                // TODO Auto-generated catch block
+            } catch (ClientProtocolException e) {getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(getActivity(), "Error occurred",
+                            Toast.LENGTH_LONG).show();
+                    pd.dismiss();
+                }
+            });
             } catch (IOException e) {
-                Toast.makeText(getActivity(), "Error: Your Internet might be down, please check your connection",
-                        Toast.LENGTH_LONG).show();
+
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), "Error: Your Internet might be down, " +
+                                        "please check your connection",
+                                Toast.LENGTH_LONG).show();
+                        pd.dismiss();
+                    }
+                });
+
             }
             return null;
         }

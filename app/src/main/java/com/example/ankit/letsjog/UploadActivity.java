@@ -95,6 +95,7 @@ public class UploadActivity extends ActionBarActivity {
         Uri albumArtUri;
         String songTitle;
         int _id;
+        String playlistId;
 
         @Override
         protected void onPreExecute() {
@@ -103,6 +104,7 @@ public class UploadActivity extends ActionBarActivity {
             sourceFile = new File(intent.getStringExtra("uri"));
             albumArtUri = Uri.parse(intent.getStringExtra("coverUri"));
             songTitle = intent.getStringExtra("title");
+            playlistId = intent.getStringExtra("playlist");
             _id = intent.getIntExtra("_id",-1);
 
             Global.uploadingList.add(_id);
@@ -162,6 +164,7 @@ public class UploadActivity extends ActionBarActivity {
                 // Extra parameters if you want to pass to server
                 entity.addPart("lat", new StringBody(""+LocationFinder.getLat()));
                 entity.addPart("lon", new StringBody(""+LocationFinder.getLon()));
+                entity.addPart("playlist", new StringBody(""+playlistId));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

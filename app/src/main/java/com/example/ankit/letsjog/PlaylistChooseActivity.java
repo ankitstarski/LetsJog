@@ -1,14 +1,12 @@
 package com.example.ankit.letsjog;
 
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -30,39 +28,48 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Created by ankit on 1/19/15.
+ * Created by ankit on 1/22/15.
  */
-public class PlaylistsFragment extends Fragment implements ListView.OnItemClickListener {
+public class PlaylistChooseActivity extends ActionBarActivity implements ListView.OnItemClickListener {
 
-    private ArrayAdapter<String> adapter;
-    private ListView listView;
-    private ProgressBar pb;
-    public static String[] playlists;
-    public static String[] _ids;
+    ListView listView;
+    ProgressBar pb;
+    Intent intent;
+
+    String[] playlists,_ids;
+    ArrayAdapter<String> adapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view =inflater.inflate(R.layout.fragment_playlists, container, false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.songs_list_activity);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setTitle("Choose a playlist");
 
-        listView = (ListView)view.findViewById(R.id.playlists);
-        pb = (ProgressBar) view.findViewById(R.id.playlistLoading);
+        intent = getIntent();
+
+        listView = (ListView)findViewById(R.id.playlists);
+        pb = (ProgressBar)findViewById(R.id.playlistLoading);
+
         listView.setOnItemClickListener(this);
+
         new PlaylistFetcher(true).execute();
 
-        return  view;
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        Intent i = new Intent(getActivity(),PlaylistSongView.class);
-        i.putExtra("_id",_ids[position]);
+        Intent i = new Intent(getBaseContext(),UploadActivity.class);
+        i.putExtra("playlist",_ids[position]);
+        i.putExtras(intent.getExtras());
         startActivity(i);
+        //finish();
     }
 
 
-    public class PlaylistFetcher extends AsyncTask<Void, Void, HttpResponse>{
+    public class PlaylistFetcher extends AsyncTask<Void, Void, HttpResponse> {
 
         boolean location ;
 
@@ -77,31 +84,35 @@ public class PlaylistsFragment extends Fragment implements ListView.OnItemClickL
             HttpPost httppost = new HttpPost(Global.PLAYLIST_URL);
 
             try {
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
                 if(location) {
-                    // Add your data
-                    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+                    // Add your lat lon
                     nameValuePairs.add(new BasicNameValuePair("lat", "" + LocationFinder.getLat()));
                     nameValuePairs.add(new BasicNameValuePair("lon", "" + LocationFinder.getLon()));
-                    httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
                 }
+
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
                 // Execute HTTP Post Request
                 HttpResponse response = httpclient.execute(httppost);
                 return response;
 
             } catch (ClientProtocolException e) {
-                getActivity().runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getBaseContext() , "Error occurred",
+                                Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 });
             } catch (IOException e) {
-                Log.i("fos", "Error: Your Internet might be down, please check your connection");
-                getActivity().runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
+                    @Override
                     public void run() {
-                        Toast.makeText(getActivity(), "Error: Your Internet might be down, please check your connection",
+                        Toast.makeText(getBaseContext(), "Error: Your Internet might be down, please check your connection",
                                 Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 });
             }
@@ -129,32 +140,32 @@ public class PlaylistsFragment extends Fragment implements ListView.OnItemClickL
                 }
 
             } catch (IOException e) {
-                getActivity().runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(), "Error occurred", Toast.LENGTH_LONG).show();
-                        getFragmentManager().popBackStack();
+                        Toast.makeText(getBaseContext(), "Error occurred", Toast.LENGTH_LONG).show();
+                        getSupportFragmentManager().popBackStack();
                     }
                 });
                 return;
             }catch (NumberFormatException e){
-                Toast.makeText(getActivity(),"Server might be having congestion, try again in sometime",
+                Toast.makeText(getBaseContext(),"Server might be having congestion, try again in sometime",
                         Toast.LENGTH_LONG).show();
             }
 
             if(len == 0){
-                getActivity().runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(),"We're sorry no playlists are found nearby you! " +
-                                "Try creating a new playlist for this Location",Toast.LENGTH_LONG).show();
-                        getFragmentManager().popBackStack();
+                        Toast.makeText(getBaseContext(), "We're sorry no playlists are found nearby you! " +
+                                "Try creating a new playlist for this Location", Toast.LENGTH_LONG).show();
+                        getSupportFragmentManager().popBackStack();
                     }
                 });
             }
 
             try {
-                adapter = new ArrayAdapter<String>(getActivity(), R.layout.list_item_simple, playlists);
+                adapter = new ArrayAdapter<String>(getBaseContext(), R.layout.list_item_simple, playlists);
                 listView.setAdapter(adapter);
                 pb.setVisibility(View.GONE);
             }
@@ -163,6 +174,5 @@ public class PlaylistsFragment extends Fragment implements ListView.OnItemClickL
             }
         }
     }
-
 
 }

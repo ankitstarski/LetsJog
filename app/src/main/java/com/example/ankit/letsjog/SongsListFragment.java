@@ -105,7 +105,7 @@ public class SongsListFragment extends Fragment {
 
 
     public void uploadSongAtPos(int pos){
-        Intent intent = new Intent(getActivity(),UploadActivity.class);
+        Intent intent = new Intent(getActivity(),PlaylistChooseActivity.class);
 
         cursor.moveToPosition(pos);
         int rowId = cursor.getInt(cursor.getColumnIndexOrThrow("_id"));
