@@ -31,10 +31,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
                 (DrawerLayout) findViewById(R.id.drawer), mToolbar);
 
         // Start the LocationService
-
         startService(new Intent(this,LocationService.class));
-
-
+        //getSupportFragmentManager().popBackStack();
     }
 
     @Override
@@ -55,7 +53,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
                 showSongsListFragment();
                 break;
             case 2 :
-                showSongsListFragment();
+                showPlaylistsFragment();
                 break;
             default:
                 finish();
@@ -82,6 +80,19 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
     void showSongsListFragment(){
         // Create fragment and give it an argument specifying the article it should show
         SongsListFragment newFragment = new SongsListFragment();
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.container, newFragment);
+        transaction.addToBackStack(null);
+        // Commit the transaction
+        transaction.commit();
+    }
+    void showPlaylistsFragment(){
+        // Create fragment and give it an argument specifying the article it should show
+        PlaylistsFragment newFragment = new PlaylistsFragment();
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 

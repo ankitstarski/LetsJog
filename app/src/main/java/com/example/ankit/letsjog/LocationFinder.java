@@ -1,5 +1,5 @@
 package com.example.ankit.letsjog;
-import android.app.Notification;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 /**
@@ -18,8 +20,8 @@ public class LocationFinder implements LocationListener {
     private static final int TWO_MINUTES = 1000 * 60 * 2;
 
 
-    private final long MIN_JOGGING_SPEED = 1;
-    private final long MAX_JOGGING_SPEED = 3;
+    private final double MIN_JOGGING_SPEED = 1.0;
+    private final double MAX_JOGGING_SPEED = 3.0;
 
     private static Location last;
 
@@ -63,25 +65,8 @@ public class LocationFinder implements LocationListener {
 
         if(speed>=MIN_JOGGING_SPEED && speed <= MAX_JOGGING_SPEED) {
 
-            NotificationManager notificationManager =
-                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            int icon = R.drawable.ic_launcher;
-            CharSequence notificationText = "Your coords: " + lat + ", " + lon + " speed: " + speed;
-            long meow = System.currentTimeMillis();
+            createNotification();
 
-            Notification notification = new Notification(icon, notificationText, meow);
-
-
-            CharSequence contentTitle = "Seems Like you are Jogging";
-            CharSequence contentText = "Would You like to share a Song to other Joggers";
-            Intent notificationIntent = new Intent(context, MainActivity.class);
-            notificationIntent.putExtra("fragment_number",1);
-            PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-
-            notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-
-            int SERVER_DATA_RECEIVED = 1;
-            notificationManager.notify(SERVER_DATA_RECEIVED, notification);
         }
 
     }
@@ -140,6 +125,36 @@ public class LocationFinder implements LocationListener {
         return provider1.equals(provider2);
     }
 
+    private void createNotification(){
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(context)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("Seems like you are Jogging")
+                        .setContentText("Would like to listen to the music shared at this " +
+                                "location by fellow joggers?");
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(context, MainActivity.class);
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(MainActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(1, mBuilder.build());
+    }
 
     @Override
     public void onProviderDisabled(String provider) {}

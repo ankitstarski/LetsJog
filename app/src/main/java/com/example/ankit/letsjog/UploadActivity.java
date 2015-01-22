@@ -84,7 +84,7 @@ public class UploadActivity extends ActionBarActivity {
 
     @Override
     public void onBackPressed() {
-        onBackPressed();
+        super.onBackPressed();
     }
 
     /**
@@ -158,8 +158,8 @@ public class UploadActivity extends ActionBarActivity {
                 entity.addPart("upload_file", new FileBody(sourceFile));
 
                 // Extra parameters if you want to pass to server
-                entity.addPart("lat", new StringBody("0"));
-                entity.addPart("lon", new StringBody("0"));
+                entity.addPart("lat", new StringBody(""+LocationFinder.getLat()));
+                entity.addPart("lon", new StringBody(""+LocationFinder.getLon()));
 
                 totalSize = entity.getContentLength();
                 httppost.setEntity(entity);

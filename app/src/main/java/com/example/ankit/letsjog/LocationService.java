@@ -35,6 +35,7 @@ public class LocationService extends Service {
 
     @Override
     public void onCreate() {
+
     }
 
     @Override

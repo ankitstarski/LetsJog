@@ -1,14 +1,49 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity$home">
+    tools:context=".MainActivity$home"
+    android:orientation="vertical"
+    android:paddingStart="16dp">
 
-    <TextView android:id="@+id/section_label" android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_name"
-        style="@style/AppTheme"/>
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
 
-</RelativeLayout>
+        <ImageButton
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:id="@+id/create_playlist"
+            android:background="@drawable/ic_playlist_create"
+            android:src="@drawable/imageview_interaction"
+            android:scaleType="center"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="24dp"/>
+
+        <TextView
+            android:id="@+id/create_playlist_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/playlist_create_message"
+            style="@style/AppTheme"
+            android:textSize="20sp"
+            android:layout_toRightOf="@id/create_playlist"/>
+
+        <TextView
+            android:id="@+id/create_playlist_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/playlist_create_submessage"
+            style="@style/AppTheme"
+            android:textSize="14sp"
+            android:textColor="@color/material_blue_grey_800"
+            android:layout_below="@id/create_playlist_prompt"
+            android:layout_alignLeft="@id/create_playlist_prompt"/>
+
+    </RelativeLayout>
+
+</LinearLayout>
