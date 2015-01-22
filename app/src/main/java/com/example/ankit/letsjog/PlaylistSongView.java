@@ -47,6 +47,7 @@ public class PlaylistSongView extends ActionBarActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Uploaded Songs");
 
+
         intent = getIntent();
 
         listView = (ListView)findViewById(R.id.playlists);
@@ -104,7 +105,7 @@ public class PlaylistSongView extends ActionBarActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getBaseContext() , "Error: Your Internet might be down, please check your connection",
+                        Toast.makeText(getBaseContext(), "Error: Your Internet might be down, please check your connection",
                                 Toast.LENGTH_LONG).show();
                         finish();
                     }
