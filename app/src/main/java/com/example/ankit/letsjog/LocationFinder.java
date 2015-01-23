@@ -18,18 +18,16 @@ public class LocationFinder implements LocationListener {
 
     // Constant value for 2 minutes
     private static final int TWO_MINUTES = 1000 * 60 * 2;
-
-
-    private final double MIN_JOGGING_SPEED = 1.0;
-    private final double MAX_JOGGING_SPEED = 3.0;
-
     private static Location last;
-
+    private static double speed;
+    private final double MIN_JOGGING_SPEED = 1.1;
+    private final double MAX_JOGGING_SPEED = 3.0;
     private Context context;
 
     public LocationFinder(Context ctx) {
         context = ctx;
         last=null;
+        speed = 0;
     }
 
     public static double getLat()
@@ -44,7 +42,7 @@ public class LocationFinder implements LocationListener {
 
     public static double getSpeed()
     {
-        return last.getSpeed();
+        return speed;
     }
 
     @Override
@@ -55,11 +53,15 @@ public class LocationFinder implements LocationListener {
             last = location;
         }
 
-        double lat,lon,speed;
+        double lat, lon, speed = this.speed;
 
         lat = getLat();
         lon = getLon();
-        speed = getSpeed();
+
+        // Low pass filter to improve speed accuracy
+        double delta = 0.2;
+        speed = speed * delta + last.getSpeed() * (1 - delta);
+
 
         Log.i("fos", "Location changed: "+lat+" "+lon+" "+speed);
 
@@ -135,6 +137,9 @@ public class LocationFinder implements LocationListener {
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, MainActivity.class);
         resultIntent.putExtra("fragment","playlists");
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+        mBuilder.setAutoCancel(true);
 
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
