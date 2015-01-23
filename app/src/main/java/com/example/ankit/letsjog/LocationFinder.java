@@ -1,12 +1,17 @@
 package com.example.ankit.letsjog;
 
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -20,24 +25,32 @@ public class LocationFinder implements LocationListener {
     private static final int TWO_MINUTES = 1000 * 60 * 2;
     private static Location last;
     private static double speed;
-    private final double MIN_JOGGING_SPEED = 1.1;
+    private final double MIN_JOGGING_SPEED = 2.0;
     private final double MAX_JOGGING_SPEED = 3.0;
     private Context context;
 
     public LocationFinder(Context ctx) {
         context = ctx;
-        last=null;
-        speed = 0;
+        this.last=null;
+        speed = 0.0;
     }
 
     public static double getLat()
     {
-        return last.getLatitude();
+        if(last!=null) {
+            return last.getLatitude();
+        }
+
+        return 0.0;
     }
 
     public static double getLon()
     {
-        return last.getLongitude();
+        if(last!=null) {
+            return last.getLongitude();
+        }
+
+        return 0.0;
     }
 
     public static double getSpeed()
@@ -49,7 +62,7 @@ public class LocationFinder implements LocationListener {
     public void onLocationChanged(Location location)
     {
 
-        if(isBetterLocation(location,last)){
+        if(isBetterLocation(location, last)){
             last = location;
         }
 
@@ -61,7 +74,6 @@ public class LocationFinder implements LocationListener {
         // Low pass filter to improve speed accuracy
         double delta = 0.2;
         speed = speed * delta + last.getSpeed() * (1 - delta);
-
 
         Log.i("fos", "Location changed: "+lat+" "+lon+" "+speed);
 
@@ -160,6 +172,31 @@ public class LocationFinder implements LocationListener {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
         mNotificationManager.notify(1, mBuilder.build());
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private  void buildAlertMessageNoInternet() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Your need internet to use this app, enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        context.startActivity(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override

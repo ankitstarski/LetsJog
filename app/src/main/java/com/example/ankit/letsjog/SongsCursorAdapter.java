@@ -139,9 +139,15 @@ public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnI
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                catch (Exception e){
+                    // NullPointerException and other pitfalls
+
+                    bitmap = BitmapFactory.decodeResource(context.getResources(),
+                            R.drawable.ic_coverart);
+                }
+
 
                 addBitmapToMemoryCache(position,bitmap);
-                //Log.i("fos", position+"");
 
                 return null;
             }

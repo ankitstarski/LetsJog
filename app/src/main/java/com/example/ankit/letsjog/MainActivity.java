@@ -1,7 +1,14 @@
 package com.example.ankit.letsjog;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -18,6 +25,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
     private Toolbar mToolbar;
     private NavigationDrawerFragment mNavigationDrawerFragment;
+    SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +39,21 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         mNavigationDrawerFragment.setup(R.id.fragment_drawer,
                 (DrawerLayout) findViewById(R.id.drawer), mToolbar);
 
+        sp= getSharedPreferences(Global.PREFERENCES_FILE,MODE_PRIVATE);
+
+        // if internet is not available prompt for internet
+        if(!isNetworkAvailable()){
+            buildAlertMessageNoInternet();
+        }
+
+        // for first run
+        if(!sp.contains("letsjog")){
+            sp.edit().putBoolean("letsjog",true).commit();
+        }
+
+
         // Start the LocationService
-        startService(new Intent(this,LocationService.class));
+        this.startService(new Intent(this, LocationService.class));
 
 
         Intent i = getIntent();
@@ -131,6 +152,31 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
         transaction.commit();
     }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    private  void buildAlertMessageNoInternet() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("An active internet connection is required to use this app, enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        startActivity(new Intent(Settings.ACTION_NETWORK_OPERATOR_SETTINGS));
+
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
 
     @Override
     public void onBackPressed() {
