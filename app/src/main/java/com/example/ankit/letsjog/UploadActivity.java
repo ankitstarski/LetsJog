@@ -1,19 +1,22 @@
 package com.example.ankit.letsjog;
 
 import android.app.AlertDialog;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -42,6 +45,9 @@ public class UploadActivity extends ActionBarActivity {
     ImageView coverArt;
     Long totalSize;
 
+    NotificationManager mNotifyManager;
+    NotificationCompat.Builder mBuilder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,8 +61,29 @@ public class UploadActivity extends ActionBarActivity {
 
         // Upload Intent
         intent = getIntent();
+
+        mNotifyManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setContentTitle("Uploading Song")
+                .setContentText("Starting upload")
+                .setSmallIcon(android.R.drawable.ic_menu_upload);
+        mBuilder.setOngoing(true);
+
         // Launch Upload Task
-        new UploadFileToServer().execute();
+        UploadFileToServer asyncTask = new UploadFileToServer();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+        else {
+            asyncTask.execute();
+        }
+//
+//        Intent service= new Intent(this,UploadingService.class);
+//        service.putExtras(intent.getExtras());
+//        startService(service);
+
     }
 
 
@@ -87,20 +114,19 @@ public class UploadActivity extends ActionBarActivity {
         super.onBackPressed();
     }
 
-    /**
-     * Uploading the file to server
-     * */
     private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+
         File sourceFile;
         Uri albumArtUri;
         String songTitle;
         int _id;
         String playlistId;
 
+        String responseString = null;
+
         @Override
         protected void onPreExecute() {
             // setting progress bar to zero
-
             sourceFile = new File(intent.getStringExtra("uri"));
             albumArtUri = Uri.parse(intent.getStringExtra("coverUri"));
             songTitle = intent.getStringExtra("title");
@@ -113,47 +139,23 @@ public class UploadActivity extends ActionBarActivity {
             songName.setText(songTitle);
 
             progressBar.setProgress(0);
-            super.onPreExecute();
-        }
 
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-
-            progressBar.setIndeterminate(false);
-            // Making progress bar visible
-            progressBar.setVisibility(View.VISIBLE);
-
-            // updating progress bar value
-            progressBar.setProgress(progress[0]);
-
-            // updating percentage value
-            txtPercentage.setText(String.valueOf(progress[0]) + "%");
+            mBuilder.setContentText("Uploading :" + songTitle);
         }
 
         @Override
         protected String doInBackground(Void... params) {
-
-            return uploadFile();
-
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile(){
-            String responseString = null;
-
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httppost = new HttpPost(Global.FORM_URL);
 
             try {
                 MultipartUploader entity = new MultipartUploader(
-                    new MultipartUploader.ProgressListener() {
-
-                        @Override
-                        public void transferred(long num) {
-                            publishProgress((int) ((num / (float) totalSize) * 100));
+                        new MultipartUploader.ProgressListener() {
+                            @Override
+                            public void transferred(long num) {
+                                publishProgress((int) ((num / (float) totalSize) * 100));
+                            }
                         }
-
-                    }
                 );
 
                 // Adding file data to http body
@@ -188,9 +190,7 @@ public class UploadActivity extends ActionBarActivity {
                 //Log.e("fos",e.getMessage());
                 responseString = e.toString();
             }
-
             return responseString;
-
         }
 
         @Override
@@ -199,6 +199,12 @@ public class UploadActivity extends ActionBarActivity {
 
             // showing the server response in an alert dialog
             showAlert(result);
+
+            mBuilder.setContentText(result)
+                    .setProgress(0,0,false);
+            mBuilder.setOngoing(false);
+            mNotifyManager.notify(_id+100, mBuilder.build());
+
             int i;
             if((i=Global.uploadingList.indexOf(_id))!=-1){
                 Global.uploadingList.remove(i);
@@ -207,7 +213,26 @@ public class UploadActivity extends ActionBarActivity {
             super.onPostExecute(result);
         }
 
+        private void publishProgress(final int progress){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // Activity part
+                    progressBar.setProgress(progress);
+                    progressBar.setIndeterminate(false);
+                    txtPercentage.setText(progress + "%");
+                    Log.i("upload", progress + "%");
+
+                    // Notification part
+                    mBuilder.setProgress(100, progress, false);
+                    mBuilder.setContentInfo(progress + "% uploaded");
+                    // Issues the notification
+                    mNotifyManager.notify(_id+100, mBuilder.build());
+                }
+            });
+        }
     }
+
 
     /**
      * Method to show alert dialog

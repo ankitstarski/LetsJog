@@ -39,11 +39,6 @@ public class LocationService extends Service {
     }
 
     @Override
-    public void onCreate() {
-
-    }
-
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
 

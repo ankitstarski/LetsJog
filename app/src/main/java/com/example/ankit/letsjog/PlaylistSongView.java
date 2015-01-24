@@ -47,7 +47,6 @@ public class PlaylistSongView extends ActionBarActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Uploaded Songs");
 
-
         intent = getIntent();
 
         listView = (ListView)findViewById(R.id.playlists);
@@ -56,8 +55,6 @@ public class PlaylistSongView extends ActionBarActivity {
         new PlaylistSongFetcher(false).execute();
 
     }
-
-
 
     public class PlaylistSongFetcher extends AsyncTask<Void, Void, HttpResponse> {
 
@@ -158,5 +155,4 @@ public class PlaylistSongView extends ActionBarActivity {
             }
         }
     }
-
 }

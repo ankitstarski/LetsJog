@@ -91,7 +91,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
                 showPlaylistsFragment();
                 break;
             default:
-                finish();
+                if(Global.uploadingList.isEmpty())
+                    finish();
+                else
+                    moveTaskToBack(true);
                 break;
 
         }

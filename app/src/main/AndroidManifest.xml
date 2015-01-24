@@ -42,6 +42,10 @@
                 <action android:name="com.example.ankit.letsjog.LocationService"></action>
             </intent-filter>
         </service>
+        <service
+            android:name=".UploadingService"
+            android:label="Uploading Service" >
+        </service>
     </application>
 
 </manifest>
