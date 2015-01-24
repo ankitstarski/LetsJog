@@ -2,6 +2,7 @@ package com.example.ankit.letsjog;
 
 import android.app.AlertDialog;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
@@ -62,6 +62,10 @@ public class UploadActivity extends ActionBarActivity {
         // Upload Intent
         intent = getIntent();
 
+
+
+
+        /*
         mNotifyManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(this);
@@ -70,8 +74,10 @@ public class UploadActivity extends ActionBarActivity {
                 .setSmallIcon(android.R.drawable.ic_menu_upload);
         mBuilder.setOngoing(true);
 
+
         // Launch Upload Task
         UploadFileToServer asyncTask = new UploadFileToServer();
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -79,6 +85,7 @@ public class UploadActivity extends ActionBarActivity {
         else {
             asyncTask.execute();
         }
+        */
 //
 //        Intent service= new Intent(this,UploadingService.class);
 //        service.putExtras(intent.getExtras());
@@ -113,6 +120,23 @@ public class UploadActivity extends ActionBarActivity {
     public void onBackPressed() {
         super.onBackPressed();
     }
+
+
+    public class UploadProgressReciever extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int progress = intent.getIntExtra("progress",0);
+
+            progressBar.setProgress(progress);
+            progressBar.setIndeterminate(false);
+            txtPercentage.setText(progress + "%");
+            Log.i("upload", progress + "%");
+        }
+    }
+
+
+
 
     private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
 

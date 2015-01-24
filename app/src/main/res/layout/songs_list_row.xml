@@ -12,7 +12,8 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="6dip"
         android:contentDescription="TODO"
-        android:src="@drawable/ic_coverart"/>
+        android:src="@drawable/ic_coverart"
+        android:layout_marginLeft="@dimen/padding_horizontal"/>
 
     <TextView
         android:id="@+id/secondLine"

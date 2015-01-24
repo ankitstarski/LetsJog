@@ -97,7 +97,6 @@ public class LocationService extends Service {
             Toast.makeText(this, "Error Occurred", Toast.LENGTH_LONG).show();
         }
         Log.i("fos","Location Service Created");
-        Toast.makeText(this, "Service Started", Toast.LENGTH_LONG).show();
         return Service.START_STICKY;
     }
 

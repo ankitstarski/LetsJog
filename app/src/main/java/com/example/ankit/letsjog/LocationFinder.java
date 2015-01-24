@@ -171,7 +171,7 @@ public class LocationFinder implements LocationListener {
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
-        mNotificationManager.notify(1, mBuilder.build());
+        mNotificationManager.notify(Integer.MAX_VALUE, mBuilder.build());
     }
 
     private boolean isNetworkAvailable() {

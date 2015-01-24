@@ -2,6 +2,7 @@ package com.example.ankit.letsjog;
 
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -32,7 +33,6 @@ public class UploadingService extends Service {
     Intent intent;
     Long totalSize;
 
-
     NotificationManager mNotifyManager;
     NotificationCompat.Builder mBuilder;
     final int NOTIFICATION_ID = 1011;
@@ -44,16 +44,25 @@ public class UploadingService extends Service {
         mNotifyManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setContentTitle("Uploading Song")
+
+        Intent notificationIntent = new Intent(this, UploadActivity.class);
+        notificationIntent.putExtras(intent.getExtras());
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
+        mBuilder.setContentTitle("Uploading Music ")
                 .setContentText("Starting upload")
-                .setSmallIcon(android.R.drawable.ic_menu_upload);
-        mBuilder.setOngoing(true);
+                .setSmallIcon(android.R.drawable.ic_menu_upload)
+                .setOngoing(true);
+                //.setContentIntent(pendingIntent);
 
-        mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
+        int _id = intent.getIntExtra("_id",-1);
 
-        new Thread(new UploadFileToServer()).start();
+        if(!Global.uploadingList.contains(_id)) {
+            new Thread(new UploadFileToServer()).start();
+            startForeground(_id, mBuilder.build());
+        }
 
-        return START_FLAG_REDELIVERY;
+        return START_REDELIVER_INTENT;
     }
 
 
@@ -83,8 +92,11 @@ public class UploadingService extends Service {
             _id = intent.getIntExtra("_id",-1);
 
             Global.uploadingList.add(_id);
-
-            mBuilder.setContentText("Uploading :" + songTitle);
+            mBuilder.setContentTitle("Uploading Music ")
+                    .setContentText("Starting upload")
+                    .setSmallIcon(android.R.drawable.ic_menu_upload)
+                    .setOngoing(true);
+            mNotifyManager.notify(_id,mBuilder.build());
         }
 
         private void background(){
@@ -138,26 +150,47 @@ public class UploadingService extends Service {
         private void postExecute(){
             Log.e("fos", "Response from server: " + responseString);
 
-            mBuilder.setContentText("Upload complete")
-                    .setProgress(0,0,false);
-            mBuilder.setOngoing(false);
-            mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
+            if(responseString.toLowerCase().equals("success")){
+
+                mBuilder.setContentTitle("Upload complete")
+                        .setContentText("")
+                        .setProgress(0,0,false);
+                mBuilder.setOngoing(false);
+                mNotifyManager.notify(_id, mBuilder.build());
+            }
+            else{
+                mBuilder.setContentText("Error in uploading, try again")
+                        .setContentTitle("Error")
+                        .setProgress(0,0,false);
+                mBuilder.setOngoing(false);
+                mNotifyManager.notify(_id, mBuilder.build());
+            }
 
             // showing the server response in an alert dialog
             int i;
             if((i=Global.uploadingList.indexOf(_id))!=-1){
                 Global.uploadingList.remove(i);
             }
+
+            if(Global.uploadingList.isEmpty()){
+                stopSelf();
+            }
         }
 
         private void publishProgress(final int progress){
             Log.i("upload", progress + "%");
 
+            Intent intent = new Intent();
+            intent.putExtra("progress",progress);
+            intent.setAction("com.ankit.example.letsjog.uploadbroadcast");
+            sendBroadcast(intent);
+
             // Notification part
             mBuilder.setProgress(100, progress, false);
             mBuilder.setContentInfo(progress + "% uploaded");
+            mBuilder.setContentText("Uploading "+songTitle);
             // Issues the notification
-            mNotifyManager.notify(NOTIFICATION_ID, mBuilder.build());
+            mNotifyManager.notify(_id, mBuilder.build());
         }
     }
 

@@ -61,11 +61,14 @@ public class PlaylistChooseActivity extends ActionBarActivity implements ListVie
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent i = new Intent(getBaseContext(),UploadActivity.class);
+
+        //Intent i = new Intent(getBaseContext(),UploadActivity.class);
+        Intent i = new Intent(getBaseContext(),UploadingService.class);
         i.putExtra("playlist",_ids[position]);
         i.putExtras(intent.getExtras());
-        startActivity(i);
-        //finish();
+        //startActivity(i);
+        startService(i);
+        finish();
     }
 
 

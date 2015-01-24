@@ -180,7 +180,6 @@ public class SongsCursorAdapter extends CursorAdapter implements AdapterView.OnI
         intent.setAction(android.content.Intent.ACTION_VIEW);
         File file = new File(songUri);
         intent.setDataAndType(Uri.fromFile(file), "audio/*");
-
         context.startActivity(intent);
     }
 

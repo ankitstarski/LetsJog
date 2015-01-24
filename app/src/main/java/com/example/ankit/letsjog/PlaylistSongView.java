@@ -1,12 +1,14 @@
 package com.example.ankit.letsjog;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -29,13 +31,13 @@ import java.util.Scanner;
 /**
  * Created by ankit on 1/22/15.
  */
-public class PlaylistSongView extends ActionBarActivity {
+public class PlaylistSongView extends ActionBarActivity implements AdapterView.OnItemClickListener {
 
     ListView listView;
     ProgressBar pb;
     Intent intent;
 
-    String[] songs,_ids;
+    String[] songs,_ids,urls;
     ArrayAdapter<String> adapter;
 
     @Override
@@ -51,9 +53,18 @@ public class PlaylistSongView extends ActionBarActivity {
 
         listView = (ListView)findViewById(R.id.playlists);
         pb = (ProgressBar)findViewById(R.id.playlistLoading);
-
+        listView.setOnItemClickListener(this);
         new PlaylistSongFetcher(false).execute();
 
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        Intent intent = new Intent();
+        intent.setAction(android.content.Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.parse(Global.UPLOADS_URL+urls[position]), "audio/*");
+        startActivity(intent);
     }
 
     public class PlaylistSongFetcher extends AsyncTask<Void, Void, HttpResponse> {
@@ -125,9 +136,11 @@ public class PlaylistSongView extends ActionBarActivity {
                 len = Integer.parseInt(in.nextLine());
                 songs = new String[len];
                 _ids = new String[len];
+                urls = new String[len];
                 Log.i("fos", len + "");
                 for (int i=0;i<len;i++){
                     songs[i]= in.nextLine();
+                    urls[i] = in.nextLine();
                     _ids[i] = in.nextLine();
                 }
 
