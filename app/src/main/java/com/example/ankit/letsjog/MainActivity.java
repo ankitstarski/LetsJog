@@ -126,8 +126,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        // Set title
-        getSupportActionBar().setTitle("Songs on your device");
+        try {
+            // Set title
+            getSupportActionBar().setTitle("Songs on your device");
+        }
+        catch (Exception e){
+
+        }
 
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back
@@ -142,8 +147,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerC
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        // Set title
-        getSupportActionBar().setTitle("Playlists created here");
+        try {
+            // Set title
+            getSupportActionBar().setTitle("Playlists created here");
+        }
+        catch (Exception e){
+
+        }
 
         // Replace whatever is in the fragment_container view with this fragment,
         // and add the transaction to the back stack so the user can navigate back

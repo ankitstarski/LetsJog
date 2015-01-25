@@ -68,6 +68,9 @@ public class PlaylistChooseActivity extends ActionBarActivity implements ListVie
         i.putExtras(intent.getExtras());
         //startActivity(i);
         startService(i);
+        Toast.makeText(this
+                ,"Uploading started, see the Top-bar for more details",
+                Toast.LENGTH_LONG).show();
         finish();
     }
 

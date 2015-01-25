@@ -9,5 +9,5 @@
     <string name="hello_world">Hello world!</string>
     <string name="playlist_create_message">Create a playlist for current location</string>
     <string name="playlist_create_submessage">Creating playlist makes this playlist go public for any person using our app at this location</string>
-
+    <string name="instructions" ><ul> <li><i>first</i> item</li> <li>item 2</li> </ul></string>
 </resources>

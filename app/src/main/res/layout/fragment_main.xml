@@ -6,7 +6,8 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".MainActivity$home"
     android:orientation="vertical"
-    android:paddingStart="5dp">
+    android:paddingStart="5dp"
+    android:weightSum="1">
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -46,5 +47,71 @@
             android:layout_alignLeft="@id/create_playlist_prompt"/>
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:padding="6dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="&#8226; To create a new playlist at your current location click the plus button above."
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="&#8226; To upload a new song at this location"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginLeft="20dp"
+            android:text="&#8226; Go to Songs then long click the song you want to upload."
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginLeft="20dp"
+            android:text="&#8226; Select 'Share with other Joggers'"
+            />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="&#8226; To listen to the uploaded songs at this location"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginLeft="20dp"
+            android:text="&#8226; Go to playlists"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginLeft="20dp"
+            android:text="&#8226; Select a playlist"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_marginLeft="20dp"
+            android:text="&#8226; Click a song for streaming"
+            />
+    </LinearLayout>
 
 </LinearLayout>

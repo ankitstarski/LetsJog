@@ -96,7 +96,7 @@ public class UploadingService extends Service {
                     .setContentText("Starting upload")
                     .setSmallIcon(android.R.drawable.ic_menu_upload)
                     .setOngoing(true);
-            mNotifyManager.notify(_id,mBuilder.build());
+            mNotifyManager.notify(_id, mBuilder.build());
         }
 
         private void background(){
